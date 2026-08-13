@@ -71,4 +71,4 @@ Simply press `Ctrl + C` in the terminal running the script. The script will auto
 
 * **Script gets stuck in an "ERROR" loop:** Unplug the iPhone, run `sudo systemctl restart usbmuxd`, and plug it back in.
 * **Location is stuck after unplugging:** If your script crashes or you unplug the phone before pressing `Ctrl+C`, the simulated location will persist. **Reboot your iPhone** to permanently wipe the developer simulation and restore your actual location.
-* **Sometime it will takes few seconds to minute to return to your real location
+* **Sometime it will takes few seconds to minute** to return to your real location
