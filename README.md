@@ -1,11 +1,11 @@
 # iOS 17+ Location Spoofer for Linux (Ubuntu)
 
-A robust, auto-reconnecting bash script to spoof the GPS location of an iPhone running iOS 17 or newer from an Ubuntu Linux machine. 
+A robust, auto-reconnecting Bash script to spoof the GPS location of an iPhone running iOS 17 or newer from an Ubuntu Linux machine. 
 
 ## 📖 Background
 Starting with iOS 17, Apple completely overhauled how developer tools communicate with iPhones. They replaced the standard USB communication with a network-based protocol called **CoreDevice** (and **DVT** for developer actions), which can be notoriously unstable on Linux. 
 
-This repository provides a wrapper script around `pymobiledevice3` to establish a background tunnel to the device, bypass CLI parser quirks (like negative coordinates crashing the tool), and constantly monitor the connection so that if your USB cable wiggles, it will automatically recover and re-establish the connection.
+This repository provides a wrapper script around `pymobiledevice3` to establish a background tunnel to the device, bypass CLI parser quirks (like negative coordinates crashing the tool), and constantly monitor the connection so that if your USB cable is bumped, the script automatically recovers and re-establishes the tunnel.
 
 ---
 
@@ -19,10 +19,10 @@ Apple requires explicit consent to use developer features like location simulati
 4. Unlock the device and tap **Turn On** when prompted.
 
 ### 2. Install Ubuntu Dependencies
-You will need the standard Apple USB multiplexer and Python tools installed on your host machine.
+You will need the standard Apple USB multiplexer and `curl` installed on your host machine.
 ```bash
 sudo apt update
-sudo apt install usbmuxd libimobiledevice-utils python3-pip python3-venv git
+sudo apt install usbmuxd libimobiledevice-utils curl git
 ```
 
 ---
@@ -31,17 +31,25 @@ sudo apt install usbmuxd libimobiledevice-utils python3-pip python3-venv git
 
 **1. Clone the repository**
 ```bash
-clone this repo
+git clone <URL_TO_THIS_REPO>
+cd <REPO_DIRECTORY>
 ```
 
-**2. Create a Dedicated Python Environment**
-To prevent conflicts with your system's Python or package managers like Anaconda, the script expects `pymobiledevice3` to be installed in a dedicated virtual environment in your home folder.
+**2. Install uv (Fast Python Package Manager)**
+This script uses `uv` to manage an isolated Python environment. Run the standalone installer and then refresh your terminal:
 ```bash
-python3 -m venv ~/ios-spoof-env
-~/ios-spoof-env/bin/pip install pymobiledevice3
+curl -LsSf [https://astral.sh/uv/install.sh](https://astral.sh/uv/install.sh) | sh
+source $HOME/.local/bin/env
 ```
 
-**3. Make the script executable**
+**3. Create a Dedicated Python Environment**
+To prevent conflicts with your system's packages, create a dedicated virtual environment in your home folder and install `pymobiledevice3`:
+```bash
+uv venv ~/ios-spoof-env
+uv pip install pymobiledevice3 --python ~/ios-spoof-env
+```
+
+**4. Make the script executable**
 ```bash
 chmod +x spoof.sh
 ```
@@ -70,5 +78,5 @@ Simply press `Ctrl + C` in the terminal running the script. The script will auto
 ## 🚑 Troubleshooting
 
 * **Script gets stuck in an "ERROR" loop:** Unplug the iPhone, run `sudo systemctl restart usbmuxd`, and plug it back in.
-* **Location is stuck after unplugging:** If your script crashes or you unplug the phone before pressing `Ctrl+C`, the simulated location will persist. **Reboot your iPhone** to permanently wipe the developer simulation and restore your actual location.
-* **Sometime it will takes few seconds to minute** to return to your real location
+* **Location is stuck after unplugging:** If your script crashes or you unplug the phone before pressing `Ctrl + C`, the simulated location will persist. **Reboot your iPhone** to permanently wipe the developer simulation and restore your actual location.
+* **Sometimes it takes a few seconds to a minute** to return to your real location after stopping the script.
